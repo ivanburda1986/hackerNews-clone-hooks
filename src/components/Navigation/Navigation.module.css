@@ -1,0 +1,37 @@
+.Navigation{
+  height: 50px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.Navigation ul{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  list-style: none;
+}
+
+.Link{
+  padding: 0.4em 0.8em;
+  padding-left: 0;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+
+}
+
+.Active{
+  color: tomato;
+  font-weight: 600;
+}
+
+button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5em;
+  margin: 0.5em;
+}

@@ -1,0 +1,22 @@
+Curriculum 
+https://github.com/uidotdev/react-course-curriculum
+
+Documentation 
+https://github.com/HackerNews/API
+
+Finished project
+https://hn.ui.dev/
+
+//Async code
+https://learnwithparam.com/blog/how-to-handle-fetch-errors/
+https://javascript.info/promise-chaining
+https://developer.mozilla.org/en-US/docs/Web/API/Response
+https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+
+Update an already loaded component when its props change
+https://medium.com/hackernoon/replacing-componentwillreceiveprops-with-getderivedstatefromprops-c3956f7ce607
+https://dev.to/cesareferrari/using-the-route-render-prop-in-react-k5a
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"

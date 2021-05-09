@@ -1,0 +1,45 @@
+
+.bg-light{
+    padding: 10vh 5vh;
+    padding: 10vh;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+  }
+  
+  .bg-dark{
+    padding: 10vh 5vh;
+    padding: 10vh;
+    width: 100%;
+    height: 100%;
+    background-color: #343434;
+  }
+
+ .link-light{
+    color: blue;
+    text-decoration: underline;
+    text-decoration-color: blue;
+  }
+
+  .link-dark{
+    color: rgb(68, 134, 172);
+    text-decoration: underline;
+    text-decoration-color: rgb(68, 134, 172);
+  }
+
+  .text-light{
+    color:rgb(91, 94, 94);
+  }
+
+  .text-dark{
+    color: rgb(204, 197, 197);
+  }
+
+  .navlinkInactiveDark{
+    color: rgb(121, 121, 121);
+  }
+
+  .navlinkInactiveLight{
+    color: rgb(6, 7, 7);
+  }
+

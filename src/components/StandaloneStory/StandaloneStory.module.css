@@ -1,0 +1,17 @@
+.Title{
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 2rem;
+  padding: 0.25em 0.5em;;
+  padding-left: 0;
+  color: rgb(202, 50, 23);
+}
+
+.Text{
+  padding: 0.75rem 0;
+  font-size: 1.1rem;
+}
+
+.Text * {
+  margin-top: 0.5rem;
+}

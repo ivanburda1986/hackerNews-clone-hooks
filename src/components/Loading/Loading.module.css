@@ -1,0 +1,9 @@
+.Loading{
+  font-size: 35px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-top: 0;
+  text-align: center;
+  color: red;
+}
