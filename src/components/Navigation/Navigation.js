@@ -6,11 +6,11 @@ import classesGlobal from '../../global.module.css';
 
 
 const Navigation = (props) =>{
+  const theme = React.useContext(ThemeConsumer);
+
   const getLinkClasses = (theme) => {
     return [classes.Link, theme === "dark" ? classesGlobal.navlinkInactiveDark : classesGlobal.navlinkInactiveLight].join(" ");
   };
-
-  const {theme, toggleTheme} = React.useContext(ThemeConsumer);
 
   return (
         <nav className={classes.Navigation}>
@@ -18,7 +18,7 @@ const Navigation = (props) =>{
           <li><NavLink to="/" exact activeClassName={classes.Active} className={getLinkClasses(theme)}>Top</NavLink></li>
           <li><NavLink to="/new" exact activeClassName={classes.Active} className={getLinkClasses(theme)}>New</NavLink></li>
         </ul>
-        <button onClick={()=>toggleTheme()}>{theme==="light" ? '🔦' : '💡'}</button>
+        <button onClick={()=>props.toggleTheme()}>{theme==="light" ? '🔦' : '💡'}</button>
       </nav>
   );
 }

@@ -48,5 +48,5 @@ export async function getUserData(id){
     throw new Error (`HTTP error! status: ${response.status}`);
   }
   const userDetails = await response.json();
-  return {id:userDetails.id, about: userDetails.about, created: userDetails.created, submitted: userDetails.submitted.slice(0,50), karma: userDetails.karma, about: userDetails.about };
+  return {id:userDetails.id, about: userDetails.about, created: userDetails.created, submitted: userDetails.submitted.slice(0,50), karma: userDetails.karma };
 };
