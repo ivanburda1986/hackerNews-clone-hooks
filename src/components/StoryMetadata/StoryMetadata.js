@@ -10,7 +10,7 @@ import {getHumanDate} from '../../utils/convertors';
 import {ThemeConsumer} from '../../contexts/theme';
 
 const StoryMetadata = (props) => {
-  const {theme} = React.useContext(ThemeConsumer);
+  const theme = React.useContext(ThemeConsumer);
 
   let time = getHumanDate(props.time);
   let wordWith = typeof props.commentCount === "number" ? "with":null;
