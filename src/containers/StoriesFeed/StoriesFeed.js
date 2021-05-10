@@ -37,7 +37,10 @@ export default function StoriesFeed (props) {
   );
 
   React.useEffect(()=>{
-    console.log(storyType);
+    setStoryType(props.storyType);
+  },[props]);
+
+  React.useEffect(()=>{
     fetchStories(storyType)
     .then((data)=>dispatch({
       type: 'success',
