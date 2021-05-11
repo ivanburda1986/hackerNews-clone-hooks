@@ -20,7 +20,7 @@ const StandaloneStory = React.lazy(()=>import('./components/StandaloneStory/Stan
 const User = React.lazy(()=>import('./components/User/User'));
 
 
-function App(){
+const App = ()=>{
   const [theme, setTheme] = React.useState("light");
   const toggleTheme = () => setTheme((theme) => theme === "light" ? "dark" : "light");
 

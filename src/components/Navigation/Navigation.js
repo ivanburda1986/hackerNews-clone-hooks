@@ -1,12 +1,12 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
-import {ThemeConsumer} from '../../contexts/theme';
+import ThemeContext from '../../contexts/theme';
 import classes from './Navigation.module.css';
 import classesGlobal from '../../global.module.css';
 
 
 const Navigation = (props) =>{
-  const theme = React.useContext(ThemeConsumer);
+  const theme = React.useContext(ThemeContext);
 
   const getLinkClasses = (theme) => {
     return [classes.Link, theme === "dark" ? classesGlobal.navlinkInactiveDark : classesGlobal.navlinkInactiveLight].join(" ");

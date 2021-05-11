@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import StoryMetadata from '../StoryMetadata/StoryMetadata';
 import classes from './Comment.module.css';
 
-import {ThemeConsumer} from '../../contexts/theme';
+import ThemeContext from '../../contexts/theme';
 
 
 const Comment = (props) =>{
-  const {theme} = React.useContext(ThemeConsumer);
+  const theme = React.useContext(ThemeContext);
   return(
         <div className={classes[`Comment-${theme}`]}>
         <StoryMetadata by={props.by} time={props.time}/>
