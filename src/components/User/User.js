@@ -35,7 +35,10 @@ function fetchUserDataReducer (state, action){
 
 const User = (props) =>{
   const [state, dispatch] = React.useReducer(fetchUserDataReducer,{
-    data: {},
+    data: {
+      userData: {},
+      storiesData: new Array({ivan:"ivan"},{ivan:"ivan"},{ivan:"ivan"},{ivan:"ivan"},{ivan:"ivan"})
+    },
     loading: false,
     error: null,
   });
@@ -69,7 +72,7 @@ const User = (props) =>{
   // Fetch stories
   React.useEffect(()=>{
     if(state.data.userData !== undefined && loadStories === true){
-      console.log('going');
+
       fetchUsersStories();
       setloadStories(false);
     }
@@ -78,7 +81,7 @@ const User = (props) =>{
   const fetchUsersStories = () => {
     let combinedData = {
       userData: {...state.data.userData},
-      storiesData: []
+      storiesData: state.data.storiesData
     };
 
     dispatch({
@@ -86,18 +89,21 @@ const User = (props) =>{
       loading: true,
     });
 
-    combinedData.userData.submitted.forEach((id)=>{
-      getItemDetails(id)
+    for(let i = 0; i<combinedData.userData.submitted.length; i++){
+      getItemDetails(combinedData.userData.submitted[i])
       .then((data)=>{
       if (data.type === "story" && !data.deleted){
         combinedData.storiesData.push(data);
       }})
-      .then(()=>dispatch({
-        type: "success",
-        data: combinedData
-      }))
       .catch((error)=>console.log(error));
-    })
+      if(i === combinedData.userData.submitted.length-1){
+
+        dispatch({
+          type: "success",
+          data: combinedData
+        })
+      }
+    }
   };
 
   //Display user data
@@ -118,7 +124,7 @@ const User = (props) =>{
   const storiesDisplay = () =>{
     let stories = state.data.storiesData;
     console.log(stories);
-    if(stories !== undefined){
+    /* if(stories !== undefined){
       if(state.loading){
         return <Loading text="Loading"/>
       }
@@ -138,17 +144,8 @@ const User = (props) =>{
           comments={story.kids}
           commentCount={story.kids ? story.kids.length : 0}
         />
-      ));
-
-      
-    }
-    
- 
-
-  
-     
-
-
+      )); 
+    } */
   }
 
     return(
