@@ -10,97 +10,114 @@ import {getHumanDate} from '../../utils/convertors';
 import {getUserData, getItemDetails} from '../../utils/api';
 
 
+function fetchUserDataReducer (state, action){
+  if(action.type === "fetching"){
+    return{
+      ...state,
+      loading: true
+    }
+  } else if(action.type === "success"){
+    return{
+      ...state,
+      data: action.data,
+      loading: false,
+    }
+  } else if(action.type === "error"){
+    return{
+      ...state,
+      error: action.message,
+      loading: false,
+    }
+  } else{
+    throw new Error ("That action type is not supported.");
+  }
+}
+
 const User = (props) =>{
-  const [userDetailsState, setUserDetailsState] = React.useState([]);
-  const [storyDetailsState, setstoryDetailsState] = React.useState([]);
-  const [userLoading, setUserLoading] = React.useState(false);
-  const [storiesLoading, setStoriesLoading] = React.useState(false);
-  
-  
+  const [state, dispatch] = React.useReducer(fetchUserDataReducer,{
+    data: {
+      userData: {},
+      storiesData: []
+    },
+    loading: false,
+    error: null,
+  });
 
   React.useEffect(()=>{
     const id = queryString.parse(props.location.search);
-    getUser(id.id);
+    fetchUserData(id.id);
   },[props]);
   
-  const getUser = (id) => {
-    setUserLoading(true);
+  const fetchUserData = (id) => {
+    let combinedData = {
+      userData: {...state.data.userData},
+      storiesData: [...state.data.storiesData]
+    }
+    dispatch({
+      type: "fetching",
+      loading: true,
+    })
     getUserData(id)
-      .then((data)=>{
-        setUserDetailsState(data);
-        console.log(data);
-        setUserLoading(false);
-      })
+      .then((data)=>combinedData.userData = data)
+      .then(()=>dispatch({
+        type: "success",
+        data: combinedData
+      }))
       .catch((error)=>console.log(error));
   };
 
   React.useEffect(()=>{
-    if(userDetailsState.submitted!==undefined){
-      console.log("Comment IDs: ",userDetailsState.submitted);
-      getUsersStories(userDetailsState.submitted);
+    if(state.data.userData !== undefined){
+      console.log("ivan");
     }
-  },[userDetailsState]);
+  },[state]);
 
-  const getUsersStories = (ids) => {
-    setStoriesLoading(true);
-    let updatedStories = [];
-    ids.forEach((id)=>{
+  const fetchUsersStories = (ids) => {
+    let combinedData = {
+      userData: {...state.data.userData},
+      storiesData: [...state.data.storiesData]
+    }
+/*     dispatch({
+      type: "fetching",
+      loading: true,
+    }) */
+    console.log(combinedData.userData.submitted);
+    /* ids.forEach((id)=>{
         getItemDetails(id)
         .then((data)=>{
         if (data.type === "story"){
-          updatedStories.push(data);
-        } else{
-          setStoriesLoading(false);
-        }
-        })
+          combinedData.storiesData.push(data);
+        }})
         .catch((error)=>console.log(error));
       })
-    setstoryDetailsState(updatedStories);
-    setStoriesLoading(false);
+      dispatch({
+        type: "success",
+        data: combinedData
+      }) */
   };
 
-    const storiesDisplay = () => {
-      if(storiesLoading){
-        return <Loading text="Loading"/>;
-      } else {
-        return (
-          storyDetailsState.map((story)=>
-          <Story 
-            key={story.id} 
-            id={story.id} 
-            title={story.title} 
-            url={story.url} 
-            by={story.by} 
-            time={story.time} 
-            commentCount={story.kids ? story.kids.length : 0}
-          />)
-        );
-      }
-    };
 
-    const userDisplay = () => {
-      if(userLoading){
-        return <Loading text="Loading"/>
-      } else {
-        return(
-          <div className={classes.UserDisplay}>
-            <h1 className={classes.Header}>{userDetailsState.id}</h1>
-            <p>{`Joined on ${getHumanDate(userDetailsState.created)}, has karma ${userDetailsState.karma}`}</p>
-            <p dangerouslySetInnerHTML={{__html: userDetailsState.about}}></p>
-          </div>
-        );
-      }
-    };
 
-    let userContent = userDisplay();
-    let storiesContent = storiesDisplay();
+     const userDisplay = () => {
+       
+       /* if(state.loading){
+         return <Loading text="Loading"/>
+       } else {
+         return(
+           <div className={classes.UserDisplay}>
+             <h1 className={classes.Header}>{id}</h1>
+             <p>{`Joined on ${getHumanDate(created)}, has karma ${karma}`}</p>
+             <p dangerouslySetInnerHTML={{__html: about}}></p>
+           </div>
+         );
+       } */
+     }; 
+
     return(
       <React.Fragment>
-        {userContent}
         <h1 className={classes.Header}>Posts</h1>
-        {storyDetailsState.length === 0 ? <p>No posts yet</p>:null }
       <ul>
-        {storiesContent}
+
       </ul>
       </React.Fragment>
     )
