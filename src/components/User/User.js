@@ -10,62 +10,61 @@ import {getHumanDate} from '../../utils/convertors';
 import {getUserData, getItemDetails} from '../../utils/api';
 
 
-export default class User extends React.Component{
-  state = {
-    userDetails: [],
-    storyDetails: [],
-    userLoading: false,
-    storiesLoading: false,
-  }
+const User = (props) =>{
+  const [userDetailsState, setUserDetailsState] = React.useState([]);
+  const [storyDetailsState, setstoryDetailsState] = React.useState([]);
+  const [userLoading, setUserLoading] = React.useState(false);
+  const [storiesLoading, setStoriesLoading] = React.useState(false);
+  
+  
 
-  componentDidMount(){
-    const id = queryString.parse(this.props.location.search);
-    this.getUser(id.id);
-  }
-
-  getUser = (id) => {
-    this.setState({
-      userLoading: true,
-    });
+  React.useEffect(()=>{
+    const id = queryString.parse(props.location.search);
+    getUser(id.id);
+  },[props]);
+  
+  const getUser = (id) => {
+    setUserLoading(true);
     getUserData(id)
       .then((data)=>{
-        this.setState({
-          userDetails: data,
-          userLoading: false,
-        })
+        setUserDetailsState(data);
+        console.log(data);
+        setUserLoading(false);
       })
-      .then(()=>{this.getUsersStories(this.state.userDetails.submitted);})
       .catch((error)=>console.log(error));
   };
 
-  getUsersStories = (ids) => {
-    this.setState({
-      storiesLoading: true,
-    });
+  React.useEffect(()=>{
+    if(userDetailsState.submitted!==undefined){
+      console.log("Comment IDs: ",userDetailsState.submitted);
+      getUsersStories(userDetailsState.submitted);
+    }
+  },[userDetailsState]);
+
+  const getUsersStories = (ids) => {
+    setStoriesLoading(true);
+    let updatedStories = [];
     ids.forEach((id)=>{
-      getItemDetails(id)
-      .then((data)=>{
-       if (data.type === "story"){
-        this.setState({
-          storyDetails: this.state.storyDetails.concat(data),
-          storiesLoading: false,
+        getItemDetails(id)
+        .then((data)=>{
+        if (data.type === "story"){
+          updatedStories.push(data);
+        } else{
+          setStoriesLoading(false);
+        }
         })
-       } else{
-        this.setState({
-          storiesLoading: false,
-        })
-       }
+        .catch((error)=>console.log(error));
       })
-      .catch((error)=>console.log(error));
-    })
+    setstoryDetailsState(updatedStories);
+    setStoriesLoading(false);
   };
 
-    storiesDisplay = () => {
-      if(this.state.storiesLoading){
+    const storiesDisplay = () => {
+      if(storiesLoading){
         return <Loading text="Loading"/>;
       } else {
         return (
-          this.state.storyDetails.map((story)=>
+          storyDetailsState.map((story)=>
           <Story 
             key={story.id} 
             id={story.id} 
@@ -79,32 +78,32 @@ export default class User extends React.Component{
       }
     };
 
-    userDisplay = () => {
-      if(this.state.userLoading){
+    const userDisplay = () => {
+      if(userLoading){
         return <Loading text="Loading"/>
       } else {
         return(
           <div className={classes.UserDisplay}>
-            <h1 className={classes.Header}>{this.state.userDetails.id}</h1>
-            <p>{`Joined on ${getHumanDate(this.state.userDetails.created)}, has karma ${this.state.userDetails.karma}`}</p>
-            <p dangerouslySetInnerHTML={{__html: this.state.userDetails.about}}></p>
+            <h1 className={classes.Header}>{userDetailsState.id}</h1>
+            <p>{`Joined on ${getHumanDate(userDetailsState.created)}, has karma ${userDetailsState.karma}`}</p>
+            <p dangerouslySetInnerHTML={{__html: userDetailsState.about}}></p>
           </div>
         );
       }
     };
 
-  render(){
-    const userContent = this.userDisplay();
-    const storiesContent = this.storiesDisplay();
+    let userContent = userDisplay();
+    let storiesContent = storiesDisplay();
     return(
       <React.Fragment>
         {userContent}
         <h1 className={classes.Header}>Posts</h1>
-        {this.state.storyDetails.length === 0 ? <p>No posts yet</p>:null }
+        {storyDetailsState.length === 0 ? <p>No posts yet</p>:null }
       <ul>
         {storiesContent}
       </ul>
       </React.Fragment>
     )
-  }
 };
+
+export default User;
