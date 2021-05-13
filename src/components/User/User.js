@@ -35,23 +35,22 @@ function fetchUserDataReducer (state, action){
 
 const User = (props) =>{
   const [state, dispatch] = React.useReducer(fetchUserDataReducer,{
-    data: {
-      userData: {},
-      storiesData: []
-    },
+    data: {},
     loading: false,
     error: null,
   });
+  const [loadStories, setloadStories] = React.useState(false);
 
+  // Fetch user data
   React.useEffect(()=>{
     const id = queryString.parse(props.location.search);
     fetchUserData(id.id);
   },[props]);
-  
+
   const fetchUserData = (id) => {
     let combinedData = {
       userData: {...state.data.userData},
-      storiesData: [...state.data.storiesData]
+      storiesData: state.data.storiesData
     }
     dispatch({
       type: "fetching",
@@ -64,60 +63,100 @@ const User = (props) =>{
         data: combinedData
       }))
       .catch((error)=>console.log(error));
+    setloadStories(true)
   };
 
+  // Fetch stories
   React.useEffect(()=>{
-    if(state.data.userData !== undefined){
-      console.log("ivan");
+    if(state.data.userData !== undefined && loadStories === true){
+      console.log('going');
+      fetchUsersStories();
+      setloadStories(false);
     }
-  },[state]);
+  },[state.data.userData]);
 
-  const fetchUsersStories = (ids) => {
+  const fetchUsersStories = () => {
     let combinedData = {
       userData: {...state.data.userData},
-      storiesData: [...state.data.storiesData]
-    }
-/*     dispatch({
+      storiesData: []
+    };
+
+    dispatch({
       type: "fetching",
       loading: true,
-    }) */
-    console.log(combinedData.userData.submitted);
-    /* ids.forEach((id)=>{
-        getItemDetails(id)
-        .then((data)=>{
-        if (data.type === "story"){
-          combinedData.storiesData.push(data);
-        }})
-        .catch((error)=>console.log(error));
-      })
-      dispatch({
+    });
+
+    combinedData.userData.submitted.forEach((id)=>{
+      getItemDetails(id)
+      .then((data)=>{
+      if (data.type === "story" && !data.deleted){
+        combinedData.storiesData.push(data);
+      }})
+      .then(()=>dispatch({
         type: "success",
         data: combinedData
-      }) */
+      }))
+      .catch((error)=>console.log(error));
+    })
   };
 
-
-
+  //Display user data
      const userDisplay = () => {
-       
-       /* if(state.loading){
-         return <Loading text="Loading"/>
-       } else {
-         return(
-           <div className={classes.UserDisplay}>
-             <h1 className={classes.Header}>{id}</h1>
-             <p>{`Joined on ${getHumanDate(created)}, has karma ${karma}`}</p>
-             <p dangerouslySetInnerHTML={{__html: about}}></p>
-           </div>
-         );
-       } */
-     }; 
+      if(state.data.userData !== undefined){
+        const {id, created, karma, about} = state.data.userData;
+          return(
+            <div className={classes.UserDisplay}>
+              <h1 className={classes.Header}>{id}</h1>
+              <p>{`Joined on ${getHumanDate(created)}, has karma ${karma}`}</p>
+              <p dangerouslySetInnerHTML={{__html: about}}></p>
+            </div>
+          );
+      }
+     };
+  
+  //Display stories
+  const storiesDisplay = () =>{
+    let stories = state.data.storiesData;
+    console.log(stories);
+    if(stories !== undefined){
+      if(state.loading){
+        return <Loading text="Loading"/>
+      }
+
+      if(stories.length===0){
+        stories = <p>No stories yet</p>
+      }
+
+      return stories.map(story=>(
+        <Story
+          key={story.id}
+          id={story.id}
+          url={story.url}
+          title={story.title}
+          by={story.by}
+          time={story.time}
+          comments={story.kids}
+          commentCount={story.kids ? story.kids.length : 0}
+        />
+      ));
+
+      
+    }
+    
+ 
+
+  
+     
+
+
+  }
 
     return(
       <React.Fragment>
+        {userDisplay()}
         <h1 className={classes.Header}>Posts</h1>
       <ul>
-
+        {storiesDisplay()}
       </ul>
       </React.Fragment>
     )
