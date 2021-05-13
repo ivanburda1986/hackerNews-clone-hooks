@@ -19,7 +19,12 @@ if(action.type === "success"){
       error: action.message,
       loading: false,
     }
-  } else{
+  }else if(action.type === 'fetching'){
+    return{
+      ...state,
+      loading: true
+    }
+  }else{
     throw new Error ("That action type is not supported.");
   }
 }
@@ -40,6 +45,10 @@ const StoriesFeed = (props) => {
   },[props]);
 
   React.useEffect(()=>{
+    dispatch({
+      type: "fetching",
+      loading: true,
+    })
     fetchStories(storyType)
     .then((data)=>dispatch({
       type: 'success',
