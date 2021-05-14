@@ -28,7 +28,7 @@ async function fetchStoriesIds(type){
     throw new Error (`HTTP error! status: ${response.status}`);
   };
   const storiesIds = await response.json();
-  return storiesIds.slice(0,5);
+  return storiesIds.slice(0,10);
 };
 
 //Get details of an item specified by the argument value

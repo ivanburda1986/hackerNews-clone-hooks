@@ -9,57 +9,74 @@ import Loading from '../Loading/Loading';
 import StoryMetadata from '../StoryMetadata/StoryMetadata';
 import Comment from '../Comment/Comment';
 
-export default class StandaloneStory extends React.Component{
-  state = {
-    story: [],
-    comments: [],
-    loading: false,
+//Reducer
+function fetchStandaloneStoryReducer(state,action){
+  if(action.type ==="fetch"){
+    return{
+      ...state,
+      loading: true
+    }
+  } else if(action.type ==="success"){
+    return{
+      ...state,
+      storyDetails: action.data.storyDetails,
+      storyComments: action.data.storyComments,
+      loading: false,
+    }
+  } else{
+    throw new Error("Unsupported action type");
   }
+}
 
-  componentDidMount(){
-    const id = queryString.parse(this.props.location.search);
-    this.getStory(id.id);
-  }
+//Component
+const StandaloneStory =(props)=>{
+  const [state, dispatch] = React.useReducer(
+    fetchStandaloneStoryReducer,
+    {
+      storyDetails: [],
+      storyComments: [],
+      loading: true
+    }
+  );
+  const id = queryString.parse(props.location.search);
 
-  getStory = (id) => {
-    this.setState({
-      loading: true,
-    });
+  React.useEffect(()=>{
+    getStory(id.id);
+  },[id]);
+
+  const getStory = (id) => {
     fetchCommentedStory(id)
       .then((data)=>{
-        this.setState({
-          story: data.storyDetails,
-          comments: data.storyComments,
-          loading: false,
-        })
+        console.log(data);
+        dispatch({type:"success", data})
       })
       .catch((error)=>console.log(error));
   };
 
-  render(){
-    if(this.state.loading){
-      return <Loading text="Loading"/>;
-    }
-    return(
-      <React.Fragment>
-        <h1 className={classes.Title}>{this.state.story.title}</h1>
-        <StoryMetadata 
-          by={this.state.story.by} 
-          time={this.state.story.time} 
-          commentCount={this.state.story.kids ? this.state.story.kids.length : 0} 
-          id={this.state.story.id}
-        />
-        <div className={classes.Text} dangerouslySetInnerHTML={{__html: this.state.story.text}}></div>
-        <ul>
-          {this.state.comments.map((comment)=><Comment 
-            key={comment.id}
-            id={comment.id}
-            text={comment.text}
-            by={comment.by}
-            time={comment.time}
-          />)}
-        </ul>
-      </React.Fragment>
-    );
+  if(state.loading){
+    return <Loading text="Loading"/>;
   }
-};
+  return(
+    <React.Fragment>
+    <h1 className={classes.Title}>{state.storyDetails.title}</h1>
+      <StoryMetadata 
+        by={state.storyDetails.by} 
+        time={state.storyDetails.time} 
+        commentCount={state.storyDetails.kids ? state.storyDetails.kids.length : 0} 
+        id={state.storyDetails.id}
+      />
+      <div className={classes.Text} dangerouslySetInnerHTML={{__html: state.storyDetails.text}}></div> 
+      <ul>
+       {state.storyComments.map((comment)=><Comment 
+          key={comment.id}
+          id={comment.id}
+          text={comment.text}
+          by={comment.by}
+          time={comment.time}
+        />)}
+      </ul>
+    </React.Fragment>
+  );
+}
+
+export default StandaloneStory;

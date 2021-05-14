@@ -10,153 +10,101 @@ import {getHumanDate} from '../../utils/convertors';
 import {getUserData, getItemDetails} from '../../utils/api';
 
 
-function fetchUserDataReducer (state, action){
-  if(action.type === "fetching"){
-    return{
-      ...state,
-      loading: true
-    }
-  } else if(action.type === "success"){
-    return{
-      ...state,
-      data: action.data,
-      loading: false,
-    }
-  } else if(action.type === "error"){
-    return{
-      ...state,
-      error: action.message,
-      loading: false,
-    }
-  } else{
-    throw new Error ("That action type is not supported.");
+export default class User extends React.Component{
+  state = {
+    userDetails: [],
+    storyDetails: [],
+    userLoading: false,
+    storiesLoading: false,
   }
-}
 
-const User = (props) =>{
-  const [state, dispatch] = React.useReducer(fetchUserDataReducer,{
-    data: {
-      userData: {},
-      storiesData: new Array({ivan:"ivan"},{ivan:"ivan"},{ivan:"ivan"},{ivan:"ivan"},{ivan:"ivan"})
-    },
-    loading: false,
-    error: null,
-  });
-  const [loadStories, setloadStories] = React.useState(false);
+  componentDidMount(){
+    const id = queryString.parse(this.props.location.search);
+    this.getUser(id.id);
+  }
 
-  // Fetch user data
-  React.useEffect(()=>{
-    const id = queryString.parse(props.location.search);
-    fetchUserData(id.id);
-  },[props]);
-
-  const fetchUserData = (id) => {
-    let combinedData = {
-      userData: {...state.data.userData},
-      storiesData: state.data.storiesData
-    }
-    dispatch({
-      type: "fetching",
-      loading: true,
-    })
+  getUser = (id) => {
+    this.setState({
+      userLoading: true,
+    });
     getUserData(id)
-      .then((data)=>combinedData.userData = data)
-      .then(()=>dispatch({
-        type: "success",
-        data: combinedData
-      }))
+      .then((data)=>{
+        this.setState({
+          userDetails: data,
+          userLoading: false,
+        })
+      })
+      .then(()=>{this.getUsersStories(this.state.userDetails.submitted);})
       .catch((error)=>console.log(error));
-    setloadStories(true)
   };
 
-  // Fetch stories
-  React.useEffect(()=>{
-    if(state.data.userData !== undefined && loadStories === true){
+  getUsersStories = (ids) => {
+    this.setState({
+      storiesLoading: true,
+    });
+    ids.forEach((id)=>{
+      getItemDetails(id)
+      .then((data)=>{
+       if (data.type === "story"){
+        this.setState({
+          storyDetails: this.state.storyDetails.concat(data),
+          storiesLoading: false,
+        })
+       } else{
+        this.setState({
+          storiesLoading: false,
+        })
+       }
+      })
+      .catch((error)=>console.log(error));
+    })
+  };
 
-      fetchUsersStories();
-      setloadStories(false);
-    }
-  },[state.data.userData]);
-
-  const fetchUsersStories = () => {
-    let combinedData = {
-      userData: {...state.data.userData},
-      storiesData: state.data.storiesData
+    storiesDisplay = () => {
+      if(this.state.storiesLoading){
+        return <Loading text="Loading"/>;
+      } else {
+        return (
+          this.state.storyDetails.map((story)=>
+          <Story 
+            key={story.id} 
+            id={story.id} 
+            title={story.title} 
+            url={story.url} 
+            by={story.by} 
+            time={story.time} 
+            commentCount={story.kids ? story.kids.length : 0}
+          />)
+        );
+      }
     };
 
-    dispatch({
-      type: "fetching",
-      loading: true,
-    });
-
-    for(let i = 0; i<combinedData.userData.submitted.length; i++){
-      getItemDetails(combinedData.userData.submitted[i])
-      .then((data)=>{
-      if (data.type === "story" && !data.deleted){
-        combinedData.storiesData.push(data);
-      }})
-      .catch((error)=>console.log(error));
-      if(i === combinedData.userData.submitted.length-1){
-
-        dispatch({
-          type: "success",
-          data: combinedData
-        })
-      }
-    }
-  };
-
-  //Display user data
-     const userDisplay = () => {
-      if(state.data.userData !== undefined){
-        const {id, created, karma, about} = state.data.userData;
-          return(
-            <div className={classes.UserDisplay}>
-              <h1 className={classes.Header}>{id}</h1>
-              <p>{`Joined on ${getHumanDate(created)}, has karma ${karma}`}</p>
-              <p dangerouslySetInnerHTML={{__html: about}}></p>
-            </div>
-          );
-      }
-     };
-  
-  //Display stories
-  const storiesDisplay = () =>{
-    let stories = state.data.storiesData;
-    console.log(stories);
-    /* if(stories !== undefined){
-      if(state.loading){
+    userDisplay = () => {
+      if(this.state.userLoading){
         return <Loading text="Loading"/>
+      } else {
+        return(
+          <div className={classes.UserDisplay}>
+            <h1 className={classes.Header}>{this.state.userDetails.id}</h1>
+            <p>{`Joined on ${getHumanDate(this.state.userDetails.created)}, has karma ${this.state.userDetails.karma}`}</p>
+            <p dangerouslySetInnerHTML={{__html: this.state.userDetails.about}}></p>
+          </div>
+        );
       }
+    };
 
-      if(stories.length===0){
-        stories = <p>No stories yet</p>
-      }
-
-      return stories.map(story=>(
-        <Story
-          key={story.id}
-          id={story.id}
-          url={story.url}
-          title={story.title}
-          by={story.by}
-          time={story.time}
-          comments={story.kids}
-          commentCount={story.kids ? story.kids.length : 0}
-        />
-      )); 
-    } */
-  }
-
+  render(){
+    const userContent = this.userDisplay();
+    const storiesContent = this.storiesDisplay();
     return(
       <React.Fragment>
-        {userDisplay()}
+        {userContent}
         <h1 className={classes.Header}>Posts</h1>
+        {this.state.storyDetails.length === 0 ? <p>No posts yet</p>:null }
       <ul>
-        {storiesDisplay()}
+        {storiesContent}
       </ul>
       </React.Fragment>
     )
+  }
 };
-
-export default User;

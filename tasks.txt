@@ -20,3 +20,7 @@ https://dev.to/cesareferrari/using-the-route-render-prop-in-react-k5a
 
   git config --global user.email "you@example.com"
   git config --global user.name "Your Name"
+
+
+Test data:
+Standalone-story id: http://localhost:3000/story?id=23275181
