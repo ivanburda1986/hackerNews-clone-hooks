@@ -77,7 +77,6 @@ const User = (props)=>{
       const story = storyIds[index];
       const storyDetails = await getItemDetails(story);
       if(storyDetails.type === "story" && !storyDetails.deleted){
-        console.log(storyDetails);
         data.push(storyDetails);
       }
     }

@@ -41,11 +41,11 @@ const StandaloneStory =(props)=>{
   const id = queryString.parse(props.location.search);
 
   React.useEffect(()=>{
-    getStory(id.id);
-  },[id]);
+    getStory();
+  },[]);
 
-  const getStory = (id) => {
-    fetchCommentedStory(id)
+  const getStory = () => {
+    fetchCommentedStory(id.id)
       .then((data)=>{
         console.log(data);
         dispatch({type:"success", data})

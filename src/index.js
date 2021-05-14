@@ -19,7 +19,6 @@ const Stories = React.lazy(()=>import('./containers/StoriesFeed/StoriesFeed'));
 const StandaloneStory = React.lazy(()=>import('./components/StandaloneStory/StandaloneStory'));
 const User = React.lazy(()=>import('./components/User/User'));
 
-
 const App = ()=>{
   const [theme, setTheme] = React.useState("light");
   const toggleTheme = () => setTheme((theme) => theme === "light" ? "dark" : "light");
@@ -51,7 +50,7 @@ const App = ()=>{
       </React.Suspense>
     </React.Fragment> 
   )
-}
+};
 
 ReactDOM.render(
   <React.StrictMode>

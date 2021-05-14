@@ -6,7 +6,6 @@ import classes from './Comment.module.css';
 
 import ThemeContext from '../../contexts/theme';
 
-
 const Comment = (props) =>{
   const theme = React.useContext(ThemeContext);
   return(
@@ -17,10 +16,12 @@ const Comment = (props) =>{
   );
 };
 
-export default Comment;
-
 Comment.propTypes = {
   by: PropTypes.string,
   time: PropTypes.number,
   text: PropTypes.string,
 };
+
+export default Comment;
+
+

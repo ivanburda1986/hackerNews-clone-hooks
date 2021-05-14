@@ -5,7 +5,7 @@ import Story from '../../components/Story/Story';
 
 import {fetchStories} from '../../utils/api';
 
-
+//Reducer
 function fetchStoriesReducer(state, action){
 if(action.type === "success"){
     return{
@@ -29,6 +29,7 @@ if(action.type === "success"){
   }
 }
 
+//Component
 const StoriesFeed = (props) => {
   const [storyType, setStoryType] = React.useState(props.storyType);
   const [state, dispatch] = React.useReducer(
