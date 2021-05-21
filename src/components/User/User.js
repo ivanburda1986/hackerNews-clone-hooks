@@ -51,10 +51,6 @@ const User = (props)=>{
   const[user,setUser] = React.useReducer(userReducer,{userDetails: [], userLoading: true});
   const[stories,setStories] = React.useReducer(storiesReducer,{storyDetails: [], storyLoading: true});
 
-  React.useEffect(()=>{
-    getUser();
-  },[getUser])
-
   const getUser = () => {
     getUserData(id.id)
       .then((data)=>setUser({
@@ -65,10 +61,8 @@ const User = (props)=>{
   };
 
   React.useEffect(()=>{
-    if(user.userDetails.submitted !==undefined){
-      getUsersStories(user.userDetails.submitted);
-    }
-  },[user]);
+    getUser();
+  },[])
 
   const getUsersStories = async (storyIds) => {
     console.log("Started fetching user's stories");
@@ -86,6 +80,13 @@ const User = (props)=>{
       data: data
     })
   };
+
+  React.useEffect(()=>{
+    if(user.userDetails.submitted !==undefined){
+      getUsersStories(user.userDetails.submitted);
+    }
+  },[user]);
+
 
   const userDisplay = () => {
     if(user.userLoading){
