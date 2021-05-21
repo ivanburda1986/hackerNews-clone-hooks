@@ -53,7 +53,7 @@ const User = (props)=>{
 
   React.useEffect(()=>{
     getUser();
-  },[])
+  },[getUser])
 
   const getUser = () => {
     getUserData(id.id)

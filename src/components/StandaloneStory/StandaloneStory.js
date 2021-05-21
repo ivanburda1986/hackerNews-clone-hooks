@@ -42,7 +42,7 @@ const StandaloneStory =(props)=>{
 
   React.useEffect(()=>{
     getStory();
-  },[]);
+  },[getStory]);
 
   const getStory = () => {
     fetchCommentedStory(id.id)
