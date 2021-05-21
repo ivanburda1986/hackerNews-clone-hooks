@@ -1,11 +1,23 @@
-.UserDisplay{
+.UserDisplay-light{
   margin-bottom: 1rem;
+  line-height: 1.5rem;
 }
 
-.UserDisplay p {
+.UserDisplay-dark{
+  margin-bottom: 1rem;
   line-height: 1.5rem;
+  color: rgb(204, 197, 197);
 }
 
 .Header{
   margin-bottom: 1rem;
+}
+
+.Header-light{
+  margin-bottom: 1rem;
+}
+
+.Header-dark{
+  margin-bottom: 1rem;
+  color: rgb(204, 197, 197);
 }

@@ -5,6 +5,7 @@ import Loading from '../Loading/Loading';
 import Story from '../Story/Story';
 
 import classes from './User.module.css';
+import ThemeContext from '../../contexts/theme';
 
 import {getHumanDate} from '../../utils/convertors';
 import {getUserData, getItemDetails} from '../../utils/api';
@@ -47,6 +48,7 @@ function storiesReducer(state,action){
 //Component
 const User = (props)=>{
   const id = queryString.parse(props.location.search);
+  const theme = React.useContext(ThemeContext);
 
   const[user,setUser] = React.useReducer(userReducer,{userDetails: [], userLoading: true});
   const[stories,setStories] = React.useReducer(storiesReducer,{storyDetails: [], storyLoading: true});
@@ -93,7 +95,7 @@ const User = (props)=>{
       return <Loading text="Loading"/>
     } else {
       return (
-        <div className={classes.UserDisplay}>
+        <div className={classes[`UserDisplay-${theme}`]}>
           <h1 className={classes.Header}>{user.userDetails.id}</h1>
           <p>{`Joined on ${getHumanDate(user.userDetails.created)}, has karma ${user.userDetails.karma}`}</p>
           <p dangerouslySetInnerHTML={{__html: user.userDetails.about}}></p>
@@ -127,7 +129,7 @@ const User = (props)=>{
   return(
     <React.Fragment>
       {userDisplay()}
-      <h1 className={classes.Header}>Posts</h1>
+      <h1 className={classes[`Header-${theme}`]}>Posts</h1>
       {storiesDisplay()}
     </React.Fragment>
   )
